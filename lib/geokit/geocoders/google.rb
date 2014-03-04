@@ -1,7 +1,7 @@
 module Geokit
   module Geocoders
     class GoogleGeocoder < Geocoder
-      config :client_id, :cryptographic_key, :channel
+      config :client_id, :cryptographic_key, :channel, :api_key
       self.secure = true
 
       private
@@ -59,6 +59,9 @@ module Geokit
       def self.submit_url(query_string, options = {})
         language_str = options[:language] ? "&language=#{options[:language]}" : ''
         query_string = "/maps/api/geocode/json?sensor=false&#{query_string}#{language_str}"
+        if api_key
+          query_string = "#{query_string}&key=#{api_key}"
+        end
         if client_id && cryptographic_key
           channel_string = channel ? "&channel=#{channel}" : ''
           urlToSign = query_string + "&client=#{client_id}" + channel_string
